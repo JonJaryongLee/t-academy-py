@@ -28,7 +28,7 @@ for i in range(4):
     ny = sp.y + dy[i]
     nx = sp.x + dx[i]
     # 맵을 벗어날 경우
-    if ny < 0 or nx < 0 or ny >= 4 or nx >= 4:
+    if ny < 0 or nx < 0 or ny >= N or nx >= M:
         continue
     sum_val += board[ny][nx]
 
