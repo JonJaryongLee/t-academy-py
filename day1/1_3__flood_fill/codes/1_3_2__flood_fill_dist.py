@@ -11,12 +11,12 @@ class Point:
 dy = [-1, 1, 0, 0]
 dx = [0, 0, -1, 1]
 board = [[0] * 4 for _ in range(4)]
-visited = [[False] * 4 for _ in range(4)]
+visited = [[0] * 4 for _ in range(4)]
 
 
 def bfs(st):
     q = queue.Queue()
-    visited[st.y][st.x] = True
+    visited[st.y][st.x] = 1
     q.put(st)
 
     while not q.empty():
@@ -27,7 +27,7 @@ def bfs(st):
                 continue
             if visited[np.y][np.x]:
                 continue
-            visited[np.y][np.x] = True
+            visited[np.y][np.x] = visited[current.y][current.x] + 1
             q.put(np)
 
 

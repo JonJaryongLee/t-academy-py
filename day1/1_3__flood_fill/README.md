@@ -1,6 +1,5 @@
-# 5-5-1. Flood Fill 의 이해와 구현
+# 1-3. Flood Fill 의 이해와 구현
 
-# 1. Flood Fill
 플러드필은 흘러넘쳐 채운다는 뜻이다.  
 
 호수를 만든다 생각해보자. 땅에서 어떤 부분을 파면, 물이 나오면서 우물이 채워진다.  
@@ -12,135 +11,97 @@
 플러드필 역시 BFS 를 사용한다. 그래서 BFS 로 보아도 되지만, 다음 두 가지가 다르다.  
 
 1. 상하좌우 네 방향으로 진행해야 한다. (문제에 따라선 꼭 그럴 필요가 없을 수도 있다.)  
-2. 지금까진 단순히 노드로 판단했기 때문에 `int` 가 가능했지만, 이젠 구조체를 큐 안에 집어넣어야 한다.  
+2. 지금까진 단순히 노드로 판단했기 때문에 숫자를 집어넣는 게 가능했지만, 이젠 클래스를 큐 안에 집어넣어야 한다.  
 
 ![Untitled](./Untitled%201.png)
 
 이런 식으로, 큐가 빌 때까지 반복할 것이다.  
 
-대신, 가지치기를 언제 하면 될까?  
+대신, 다음 상황에선 갈 수 없다.  
 
 1. 맵 바깥을 벗어났을 때  
 2. 이미 방문했을 때  
 
 이를 기본으로, `4 X 4` 맵과 시작점 `{1, 1}` 이 주어졌을 때, 몇 번만에 우물이 채워지는지 확인해보는 코드를 작성해보자.  
 
-```cpp
-#define _CRT_SECURE_NO_WARNINGS
-#include <iostream>
-#include <queue>
-using namespace std;
+```py
+import queue
 
-struct Point
-{
-    int y;
-    int x;
-};
-int dy[4] = { -1, 1, 0, 0 };
-int dx[4] = { 0, 0, -1, 1 };
 
-int map[4][4];
-int visited[4][4];
+class Point:
+    def __init__(self, y, x):
+        self.y = y
+        self.x = x
 
-void bfs(Point st)
-{
-    queue<Point> q;
-    visited[st.y][st.x] = 1;
-    q.push(st);
-    while (!q.empty())
-    {
-        Point now = q.front();
-        q.pop();
-        for (int i = 0; i < 4; i++)
-        {
-            Point np = { now.y + dy[i], now.x + dx[i] };
-            if (np.y < 0 || np.x < 0 || np.y >= 4 || np.x >= 4)
-                continue;
-            if (visited[np.y][np.x])
-                continue;
-            visited[np.y][np.x] = 1;
-            q.push(np);
-        }
-    }
-}
 
-int main()
-{
-    // freopen("sample_input.txt", "r", stdin);
-    Point st = { 1, 1 };
-    bfs(st);
-}
+# 방향배열
+dy = [-1, 1, 0, 0]
+dx = [0, 0, -1, 1]
+board = [[0] * 4 for _ in range(4)]
+visited = [[False] * 4 for _ in range(4)]
+
+
+def bfs(st):
+    q = queue.Queue()
+    visited[st.y][st.x] = True
+    q.put(st)
+
+    while not q.empty():
+        current = q.get()
+        for i in range(4):
+            np = Point(current.y + dy[i], current.x + dx[i])
+            if np.y < 0 or np.y >= 4 or np.x < 0 or np.x >= 4:
+                continue
+            if visited[np.y][np.x]:
+                continue
+            visited[np.y][np.x] = True
+            q.put(np)
+
+
+st = Point(1, 1)
+bfs(st)
 ```
 
 네 방향 가는 것, 맵 벗어나는 것, `visited` 체크를 잘 해주자.  
 
 맨 처음과 진행시에 `visited` 가 갱신된 이후인 두 곳에 중단점을 걸고, 확인해보자.  
 
-추가. 만약 도달하기까지의 거리를 일일이 체크하려면? `visited` 에 `1` 대신, 거리를 넣으면 될 것.  
+추가. 만약 도달하기까지의 거리를 일일이 체크하려면? `visited` 에 Boolean 대신, 거리를 넣으면 될 것.  
 
-```cpp
-// visited[np.y][np.x] = 1;
-visited[np.y][np.x] = visited[now.y][now.x] + 1;
+```py
+import queue
+
+
+class Point:
+    def __init__(self, y, x):
+        self.y = y
+        self.x = x
+
+
+# 방향배열
+dy = [-1, 1, 0, 0]
+dx = [0, 0, -1, 1]
+board = [[0] * 4 for _ in range(4)]
+visited = [[0] * 4 for _ in range(4)]
+
+
+def bfs(st):
+    q = queue.Queue()
+    visited[st.y][st.x] = 1
+    q.put(st)
+
+    while not q.empty():
+        current = q.get()
+        for i in range(4):
+            np = Point(current.y + dy[i], current.x + dx[i])
+            if np.y < 0 or np.y >= 4 or np.x < 0 or np.x >= 4:
+                continue
+            if visited[np.y][np.x]:
+                continue
+            visited[np.y][np.x] = visited[current.y][current.x] + 1
+            q.put(np)
+
+
+st = Point(1, 1)
+bfs(st)
 ```
-
-# 2. Flood Fill Top 17 - 북극곰  
-
-
-1. 첫 행/열, 마지막 행/열은 바다임이 보장되기에,  
-인덱스 범위를 벗어난다던지, 벽을 만난다던지 검증 불필요  
-
-
-2. 빙하를 줄일 때, 한번에 줄어들도록 조심해야 함.  
-
-만약 다음과 같을 때...  
-
-```
-0 1 1 1
-```
-
-
-각 빙하마다 녹이면  
-
-
-```
-0 0 1 1
-```
-이렇게 되어버림. 원래 그 다음 1 은 녹을 이유가 없었다.  
-
-
-3. 또한, 빙하를 줄일 때 0 이하로 떨어지지 않도록 주의.  
-
-
-4. 한번에 답이 나오는 조건  
-하나의 빙하밖에 없고, 빙하의 val 이 모두 같을 땐 정답은 무조건 0 이다.  
-
-
-5. 진행 중에 모든 빙하가 다 녹아버렸다면, 정답은 무조건 0 이다.  
-
-
-6. bfs 는 이어진 빙하를 찾는 용도로 쓰임  
-`visited` 를 따로 두고, `1` 로 밀어버리자.  
-bfs 시행마다 섬 갯수를 올리고,  
-섬 갯수가 `1` 보다 커지면 몇 년 걸렸는지 정답이 나옴.  
-
-
-7. 한 해가 지났다면 `visited` 초기화 필수  
-
-
-# 3. SWEA 추천 기출 번호
-지금까지 배운 내용을 기반으로, 여러분들은 기출 유형 중 "Queue / BFS / Flood Fill" 을 풀어볼 준비가 되었다.  
-어떤 문제를 보았을 때, 주변 방향으로 "퍼져나가는" 모양이라면 DFS 가 아니라 BFS 로 풀어야 유리하다.  
-해당 유형이 출제될 때, 시간초과가 발생하도록 설계해 놓는 것이 보통이기에, 가지치기에 신경쓰도록 하자.  
-또한, 고난도 출제 유형 중엔 일반 Queue 가 아닌 PQ 와 함께 결합한 문제가 나오는 경우가 있다. 이런 유형은 PQ 를 배운 후에 연습해보도록 하자.  
-시험장에 들어가기 전엔 BFS 의 기본 틀은 외워서 가는 것이 필수다. 여러 방식으로 응용해야하는 DFS 유형과는 다르게, BFS 의 기본 틀에선 크게 벗어나지 않기 때문이다.  
-
-
-추천할 문제 목록은 다음과 같다.  
-
-
-1. 1953 - 탈주범 검거  
-2. 2117 - 홈 방범 서비스    
-3. 5653 - 벽돌 깨기 (DFS + BFS)  
-
-또한, BFS 를 사용하지 않지만 Queue 를 사용해서 풀 수 있는 문제도 있다.  
-1. 2477 - 차량 정비소  
