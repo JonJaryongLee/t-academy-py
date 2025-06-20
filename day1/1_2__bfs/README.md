@@ -33,7 +33,7 @@ BFS 는 한국어로 풀어서 설명하면 "너비 우선 탐색" 인데, 내�
 
 ```py
 import sys
-import queue
+from collections import deque
 
 sys.stdin = open("input.txt", "r")
 
@@ -50,37 +50,39 @@ def bfs(st):
 bfs(0)
 ```
 
-구현을 위해, 큐 자료구조를 사용할 것이다.  
+구현을 위해, deque 자료구조를 사용할 것이다.  
 
-큐는 맨 뒤로 넣고, 맨 앞에서 뺀다.  
+deque 는 앞뒤로 넣고 빼지만, 우린 뒤에만 넣는 구조로 사용할 것이다.  
 
 ![Untitled](./Untitled%202.png)
 
- 위와 같은 방식으로 진행된다.  
+위와 같은 방식으로 진행된다.  
 
-이를 위해, 큐에서 제공하는 메서드를 알아야 한다.  
+* 코딩 테스트에 쓰이는 다른 언어 (C++ / Java) 에선 deque 를 함부로 쓰면 큰일나며, 이 경우엔 queue 를 사용하는것이 일반적이다. 그러나, Python 의 Queue 는 멀티쓰레드 환경을 고려해 Lock 을 걸기 때문에, 속도를 생각해서 deque 를 사용하는것이 권장된다.  
 
-  `Queue.get` : 맨 앞에 있는 것 "꺼내기"    
+이를 위해, deque 쓰는 법을 알아야 한다. `q` 를 deque 라고 보면...    
 
-  `Queue.put` : 맨 뒤에 추가  
+  `q.popleft` : 왼쪽에 있는 것 "꺼내기"    
 
-  `Queue.empty` : 비어있는지 확인  
+  `q.append` : 오른쪽에 추가  
+
+  `while q:` : 비어있지 않으면 반복    
 
 이를 기반으로 `bfs` 함수를 만들어보면,  
 
 ```py
-def bfs(start):
-    q = queue.Queue()  # FIFO 큐 사용
-    visited[start] = True
-    q.put(start)
+def bfs(st):
+    q = deque()
+    visited[st] = True
+    q.append(st)
 
-    while not q.empty():
-        current = q.get()  # 큐의 가장 앞의 정점을 꺼냄
-        print(current, end=" ")
+    while q:
+        cur = q.popleft()  # deque 의 왼쪽을 꺼냄
+        print(cur, end=" ")
         for i in range(M):
-            if not visited[i] and board[current][i] == 1:
+            if not visited[i] and board[cur][i] == 1:
                 visited[i] = True
-                q.put(i)
+                q.append(i)
 ```
 
 결과는?  
@@ -132,7 +134,7 @@ input 은 다음 형태로 들어온다.
 
 ```py
 import sys
-import queue
+from collections import deque
 
 sys.stdin = open("input.txt", "r")
 
@@ -146,13 +148,13 @@ for a, b in input_edges:
     v[a].append(b)
 
 
-def bfs(start):
-    q = queue.Queue()  # FIFO 큐 사용
-    visited[start] = True
-    q.put(start)
+def bfs(st):
+    q = deque()
+    visited[st] = True
+    q.append(st)
 
-    while not q.empty():
-        now = q.get()
+    while q:
+        now = q.popleft()
         print(now, end=" ")
         # ???
 
@@ -168,6 +170,6 @@ for next_node in v[now]:
     if visited[next_node]:
         continue
     visited[next_node] = True
-    q.put(next_node)
+    q.append(next_node)
 ```
 

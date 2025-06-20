@@ -25,7 +25,7 @@
 이를 기본으로, `4 X 4` 맵과 시작점 `{1, 1}` 이 주어졌을 때, 몇 번만에 우물이 채워지는지 확인해보는 코드를 작성해보자.  
 
 ```py
-import queue
+from collections import deque
 
 
 class Point:
@@ -42,20 +42,20 @@ visited = [[False] * 4 for _ in range(4)]
 
 
 def bfs(st):
-    q = queue.Queue()
+    q = deque()
     visited[st.y][st.x] = True
-    q.put(st)
+    q.append(st)
 
-    while not q.empty():
-        current = q.get()
+    while q:
+        cp = q.popleft()
         for i in range(4):
-            np = Point(current.y + dy[i], current.x + dx[i])
+            np = Point(cp.y + dy[i], cp.x + dx[i])
             if np.y < 0 or np.y >= 4 or np.x < 0 or np.x >= 4:
                 continue
             if visited[np.y][np.x]:
                 continue
             visited[np.y][np.x] = True
-            q.put(np)
+            q.append(np)
 
 
 st = Point(1, 1)
@@ -69,7 +69,7 @@ bfs(st)
 추가. 만약 도달하기까지의 거리를 일일이 체크하려면? `visited` 에 Boolean 대신, 거리를 넣으면 될 것.  
 
 ```py
-import queue
+from collections import deque
 
 
 class Point:
@@ -86,20 +86,20 @@ visited = [[0] * 4 for _ in range(4)]
 
 
 def bfs(st):
-    q = queue.Queue()
+    q = deque()
     visited[st.y][st.x] = 1
-    q.put(st)
+    q.append(st)
 
-    while not q.empty():
-        current = q.get()
+    while q:
+        cp = q.popleft()
         for i in range(4):
-            np = Point(current.y + dy[i], current.x + dx[i])
+            np = Point(cp.y + dy[i], cp.x + dx[i])
             if np.y < 0 or np.y >= 4 or np.x < 0 or np.x >= 4:
                 continue
             if visited[np.y][np.x]:
                 continue
-            visited[np.y][np.x] = visited[current.y][current.x] + 1
-            q.put(np)
+            visited[np.y][np.x] = visited[cp.y][cp.x] + 1
+            q.append(np)
 
 
 st = Point(1, 1)

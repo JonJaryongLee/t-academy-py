@@ -1,5 +1,5 @@
 import sys
-import queue
+from collections import deque
 
 sys.stdin = open("input.txt", "r")
 
@@ -13,20 +13,20 @@ for a, b in input_edges:
     v[a].append(b)
 
 
-def bfs(start):
-    q = queue.Queue()  # FIFO 큐 사용
-    visited[start] = True
-    q.put(start)
+def bfs(st):
+    q = deque()
+    visited[st] = True
+    q.append(st)
 
-    while not q.empty():
-        now = q.get()
+    while q:
+        now = q.popleft()
         print(now, end=" ")
         # 현재 노드 now와 인접한 모든 노드를 확인
         for next_node in v[now]:
             if visited[next_node]:
                 continue
             visited[next_node] = True
-            q.put(next_node)
+            q.append(next_node)
 
 
 bfs(0)

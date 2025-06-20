@@ -1,4 +1,4 @@
-import queue
+from collections import deque
 
 
 class Point:
@@ -15,20 +15,20 @@ visited = [[0] * 4 for _ in range(4)]
 
 
 def bfs(st):
-    q = queue.Queue()
+    q = deque()
     visited[st.y][st.x] = 1
-    q.put(st)
+    q.append(st)
 
-    while not q.empty():
-        current = q.get()
+    while q:
+        cp = q.popleft()
         for i in range(4):
-            np = Point(current.y + dy[i], current.x + dx[i])
+            np = Point(cp.y + dy[i], cp.x + dx[i])
             if np.y < 0 or np.y >= 4 or np.x < 0 or np.x >= 4:
                 continue
             if visited[np.y][np.x]:
                 continue
-            visited[np.y][np.x] = visited[current.y][current.x] + 1
-            q.put(np)
+            visited[np.y][np.x] = visited[cp.y][cp.x] + 1
+            q.append(np)
 
 
 st = Point(1, 1)

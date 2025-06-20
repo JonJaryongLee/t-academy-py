@@ -1,5 +1,5 @@
 import sys
-import queue
+from collections import deque
 
 sys.stdin = open("input.txt", "r")
 
@@ -9,18 +9,18 @@ board = [list(map(int, sys.stdin.readline().split())) for _ in range(N)]
 visited = [False] * N
 
 
-def bfs(start):
-    q = queue.Queue()  # FIFO 큐 사용
-    visited[start] = True
-    q.put(start)
+def bfs(st):
+    q = deque()
+    visited[st] = True
+    q.append(st)
 
-    while not q.empty():
-        current = q.get()  # 큐의 가장 앞의 정점을 꺼냄
-        print(current, end=" ")
+    while q:
+        cur = q.popleft()  # deque 의 왼쪽을 꺼냄
+        print(cur, end=" ")
         for i in range(M):
-            if not visited[i] and board[current][i] == 1:
+            if not visited[i] and board[cur][i] == 1:
                 visited[i] = True
-                q.put(i)
+                q.append(i)
 
 
 bfs(0)
