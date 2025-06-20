@@ -11,8 +11,8 @@ class Point:
 
 
 # 방향배열
-dy = [-1, 1, 0, 0]
-dx = [0, 0, -1, 1]
+dy = (-1, 1, 0, 0)
+dx = (0, 0, -1, 1)
 
 # 입력
 N, M = map(int, sys.stdin.readline().split())
